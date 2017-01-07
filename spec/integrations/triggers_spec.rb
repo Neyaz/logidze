@@ -673,21 +673,16 @@ describe "Logidze triggers with only", :db do
       post.update!(rating: nil)
       expect(post.reload.log_version).to eq 5
       expect(post.log_size).to eq 4
-      expect(post.log_data.versions.first.changes)
-          .to include("rating" => 10)
+      expect(post.log_data.versions.first.changes).to include("rating" => 10)
 
-      expect(post.log_data.versions.first.changes)
-          .not_to include("title" => "Triggers", "active" => true)
+      expect(post.log_data.versions.first.changes).not_to include("title" => "Triggers", "active" => true)
 
       post.update!(rating: 20)
       expect(post.reload.log_version).to eq 6
       expect(post.log_size).to eq 4
-      expect(post.log_data.versions.first.changes)
-          .to include("rating" => 22)
+      expect(post.log_data.versions.first.changes).to include("rating" => 22)
 
-      expect(post.log_data.versions.first.changes)
-          .not_to include("title" => "Triggers", "active" => true)
+      expect(post.log_data.versions.first.changes).not_to include("title" => "Triggers", "active" => true)
     end
   end
 end
-
