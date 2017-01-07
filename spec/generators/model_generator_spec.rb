@@ -18,15 +18,15 @@ describe Logidze::Generators::ModelGenerator, type: :generator do
 
       let(:path) { File.join(destination_root, "app", "models", "user.rb") }
       let(:args) { ["user"] }
+      let(:class_arg) do
+<<-RAW
+  class User < ActiveRecord::Base
+  end
+RAW
+      end
 
       before do
-        File.write(
-          path,
-          <<-RAW
-class User < ActiveRecord::Base
-end
-RAW
-        )
+        File.write(path, class_arg)
         run_generator(args)
       end
 
@@ -53,57 +53,57 @@ RAW
       end
 
       context "with except" do
-          let(:args) { ["user", "--except='active,age'"] }
+        let(:args) { ["user", "--except='active,age'"] }
 
-          it "creates trigger with except" do
-              is_expected.to exist
-              is_expected.to contain(/execute procedure logidze_logger\(null,\'\'active,age\'\',null\);/i)
-          end
+        it "creates trigger with except" do
+          is_expected.to exist
+          is_expected.to contain(/execute procedure logidze_logger\(null,\'\'active,age\'\',null\);/i)
+        end
       end
 
       context "with only" do
-          let(:args) { ["user", "--only='active,age'"] }
+        let(:args) { ["user", "--only='active,age'"] }
 
-          it "creates trigger with only" do
-              is_expected.to exist
-              is_expected.to contain(/execute procedure logidze_logger\(null,null,\'\'active,age\'\'\);/i)
-          end
+        it "creates trigger with only" do
+          is_expected.to exist
+          is_expected.to contain(/execute procedure logidze_logger\(null,null,\'\'active,age\'\'\);/i)
+        end
       end
 
       context "with limit and except" do
-          let(:args) { ["user", "--limit=5", "--except='active,age'"] }
+        let(:args) { ["user", "--limit=5", "--except='active,age'"] }
 
-          it "creates trigger with limit and except" do
-              is_expected.to exist
-              is_expected.to contain(/execute procedure logidze_logger\(5,\'\'active,age\'\',null\);/i)
-          end
+        it "creates trigger with limit and except" do
+          is_expected.to exist
+          is_expected.to contain(/execute procedure logidze_logger\(5,\'\'active,age\'\',null\);/i)
+        end
       end
 
       context "with limit and only" do
-          let(:args) { ["user", "--limit=5", "--only='active,age'"] }
+        let(:args) { ["user", "--limit=5", "--only='active,age'"] }
 
-          it "creates trigger with limit and only" do
-              is_expected.to exist
-              is_expected.to contain(/execute procedure logidze_logger\(5,null,\'\'active,age\'\'\);/i)
-          end
+        it "creates trigger with limit and only" do
+          is_expected.to exist
+          is_expected.to contain(/execute procedure logidze_logger\(5,null,\'\'active,age\'\'\);/i)
+        end
       end
 
       context "with limit and except and only" do
-          let(:args) { ["user", "--limit=5", "--except='active,age'", "--only='active,age'"] }
+        let(:args) { ["user", "--limit=5", "--except='active,age'", "--only='active,age'"] }
 
-          it "creates trigger with limit and except and only" do
-              is_expected.to exist
-              is_expected.to contain(/execute procedure logidze_logger\(5,\'\'active,age\'\',\'\'active,age\'\'\);/i)
-          end
+        it "creates trigger with limit and except and only" do
+          is_expected.to exist
+          is_expected.to contain(/execute procedure logidze_logger\(5,\'\'active,age\'\',\'\'active,age\'\'\);/i)
+        end
       end
 
       context "with except and only" do
-          let(:args) { ["user", "--except='active,age'", "--only='active,age'"] }
+        let(:args) { ["user", "--except='active,age'", "--only='active,age'"] }
 
-          it "creates trigger with except and only" do
-              is_expected.to exist
-              is_expected.to contain(/execute procedure logidze_logger\(null,\'\'active,age\'\',\'\'active,age\'\'\);/i)
-          end
+        it "creates trigger with except and only" do
+          is_expected.to exist
+          is_expected.to contain(/execute procedure logidze_logger\(null,\'\'active,age\'\',\'\'active,age\'\'\);/i)
+        end
       end
 
       context "with backfill" do
@@ -135,17 +135,17 @@ RAW
       subject { migration_file('db/migrate/add_logidze_to_user_guests.rb') }
 
       let(:path) { File.join(destination_root, "app", "models", "user", "guest.rb") }
+      let(:module_arg) do
+<<-RAW
+  module User
+    class Guest < ActiveRecord::Base
+    end
+  end
+RAW
+      end
 
       before do
-        File.write(
-          path,
-          <<-RAW
-module User
-  class Guest < ActiveRecord::Base
-  end
-end
-RAW
-        )
+        File.write(path, module_arg)
         run_generator ["User/Guest"]
       end
 
